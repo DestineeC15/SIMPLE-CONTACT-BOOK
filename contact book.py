@@ -1,6 +1,8 @@
 # SIMPLE CONTACT BOOK
 
-contact_book = {}
+import json # importing json
+
+CONTACTS_FILE = "contacts.json"
 
 # add contact function
 def add_contact(name, number):
@@ -25,6 +27,7 @@ def add_contact(name, number):
 
             if choice == "YES": # To uodate a contact
                 contact_book[name] = number
+                save_contacts(contact_book)
                 print(f" The Contact '{name}' has been updated to {number}")
                 print(contact_book)
                 return True
@@ -35,6 +38,7 @@ def add_contact(name, number):
                 print(" Invalid choice! Please choose 'yes' or 'no'. ")
     else:
         contact_book[name] = number
+        save_contacts(contact_book)
         print(" The contact has been succesfully added.")
         print(contact_book)
         return True
@@ -57,6 +61,31 @@ def lookup_contact(name):
     else:
         print(" Here is the contact's number.")
         print(contact_book[name])
+
+# save contacts function
+def save_contacts(data):
+
+    try:
+        with open(CONTACTS_FILE, 'w') as file_contacts:
+            json.dump(data, file_contacts, indent = 4)
+            print(" Contacts have been saved successfully! ")
+    except Exception as e:
+        print(f" Error saving contacts, {e} ")
+
+# load contacts function
+def load_contacts():
+
+    try:
+        with open(CONTACTS_FILE, 'r') as file_contacts:
+            return json.load(file_contacts)
+    except FileNotFoundError: # <--- ADD THIS BLOCK
+        print(" Contact file not found. Starting with an empty contact book.")
+        return {}
+    except json.JSONDecodeError:
+        print(" There was an error reading file. Starting with an empty file.")
+        return {}
+    
+contact_book = load_contacts()
 
 
 while True:
@@ -93,4 +122,3 @@ while True:
         print("Choose a valid action. 1, 2, 3 or 4. ")
 
 
-        
